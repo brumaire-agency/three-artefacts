@@ -1,3 +1,5 @@
+import { DoubleSide, LineBasicMaterial, MeshPhongMaterial } from 'three';
+
 /**
  * The WorldConfiguration class.
  *
@@ -18,6 +20,12 @@ export class WorldConfiguration {
       width: 2,
       height: 2,
       depth: 1,
+      radialSegments: 16,
+    },
+    materials: {
+      color: 0x156289,
+      texture: new MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: DoubleSide, flatShading: true }),
+      vertices: new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, visible: false }),
     },
   };
 

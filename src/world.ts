@@ -2,6 +2,7 @@ import { type Camera, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGLR
 import { type WorldConfiguration } from './world-configuration';
 import { type ArtefactFactory } from './artefact-factory';
 import { type SeededObject3d } from '~/types/seeded-object3d';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 /**
  * The World class.
@@ -15,12 +16,17 @@ export class World {
   /**
    * The world artefacts.
    */
-  private artefacts: SeededObject3d[];
+  private artefacts: SeededObject3d[] = [];
 
   /**
    * The world camera.
    */
-  private camera: Camera;
+  public camera: Camera;
+
+  /**
+   * The world camera controls.
+   */
+  public controls: OrbitControls;
 
   /**
    * The world clock.
@@ -80,15 +86,20 @@ export class World {
    * Sets up the artefact distribution.
    *
    * An artefact is spawned for every cell of the "x" by "z" distribution grid, positioned and added to the scene.
+   * The method is public to allow external actors (e.g. the debugger) to "re-draw" the artefacts on demand.
    */
-  private setupArtefactDistribution(): void {
+  public setupArtefactDistribution(): void {
+    // remove any previous artefacts
+    this.artefacts.forEach((artefact) => this.scene.remove(artefact));
+    // redefine the artefacts list
+    this.artefacts = [];
+    // extract required parameters from the configuration
     const { width, depth } = this.configuration.artefact.shape;
     const { columns, rows } = this.configuration.artefact.distribution;
     // the grid initial coordinates
     const initialX = (-width * rows) / 2 + width / 2; // removing half of the artefact width allows to inline the artifact with the grid
     const initialY = 0; // Y is updated in the animate() function to move the artefacts up and down
     const initialZ = (-depth * columns) / 2 + depth / 2; // removing half of the artifact width allows to inline the artifact with the grid
-    this.artefacts = [];
     // generate an artefact grid of "x" rows by "z" columns (not y because y is height, and we want a depth grid)
     for (let x = 0; x < rows; x++) {
       for (let z = 0; z < columns; z++) {
@@ -105,13 +116,17 @@ export class World {
    * Sets up the camera
    */
   private setupCamera(): void {
+    // define the camera and add it to the scene
     const { x, y, z } = this.configuration.camera;
     const { height, width } = this.configuration.sizes;
     this.camera = new PerspectiveCamera(40, width / height, 0.1, 1000);
     this.camera.position.set(x, y, z);
     this.camera.lookAt(0, 0, 0);
-
     this.scene.add(this.camera);
+    // add orbit controls for the camera
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    // update the configuration on change
+    this.controls.addEventListener('change', () => Object.assign(this.configuration.camera, this.camera.position));
   }
 
   /**

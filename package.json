@@ -34,6 +34,7 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
+    "lil-gui": "^0.18.0",
     "seedrandom": "^3.0.5",
     "three": "^0.150.1"
   }
