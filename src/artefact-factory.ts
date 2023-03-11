@@ -1,5 +1,6 @@
 import {
   BoxGeometry,
+  type BufferGeometry,
   CylinderGeometry,
   DoubleSide,
   Group,
@@ -7,11 +8,11 @@ import {
   LineSegments,
   Mesh,
   MeshPhongMaterial,
-  type Object3D,
 } from 'three';
+// @ts-expect-error there is no type definition for the BufferGeometryUtils file
 import { mergeBufferGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { type WorldConfiguration } from './world-configuration';
-import { type Geometry } from 'three/examples/jsm/deprecated/Geometry';
+import seedrandom from 'seedrandom';
+import { type SeededObject3d } from '~/types/seeded-object3d';
 
 /**
  * The ArtefactFactory class.
@@ -22,7 +23,7 @@ export class ArtefactFactory {
   /**
    * The class constructor.
    */
-  public constructor(private readonly configuration: WorldConfiguration) {}
+  // public constructor(private readonly configuration: WorldConfiguration) {}
 
   /**
    * Creates an artefact base geometry.
@@ -30,7 +31,7 @@ export class ArtefactFactory {
    * The base geometry should be re-used for every generated artefact mesh, and disposed when the user requests a
    * geometry change.
    */
-  public createArtefactBaseGeometry(width: number, height: number, depth: number): Geometry {
+  public createArtefactBaseGeometry(width: number, height: number, depth: number): BufferGeometry {
     // derive some geometry dimensions
     const cylinderRadius = depth / 2;
     const boxWidth = width - cylinderRadius * 2;
@@ -57,7 +58,7 @@ export class ArtefactFactory {
   /**
    * Creates an artefact.
    */
-  public createArtefact(): Object3D {
+  public createArtefact(x: number, y: number, z: number): SeededObject3d {
     const geometry = this.createArtefactBaseGeometry(2, 2, 1);
     // the mesh is a group of the actual mesh, as well as some line segments to show the artifact vertices in dev
     const mesh = new Group();
@@ -73,9 +74,11 @@ export class ArtefactFactory {
         new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, visible: false })
       )
     );
-    mesh.position.set(0, 0, 0);
-
-    // return the created mesh
-    return mesh;
+    // set the mesh position
+    mesh.position.set(x, y, z);
+    // compute the artefact seed - the seed is always the same for a given {x,y,z} set
+    const seed = seedrandom(`${x}-${y}-${z}`)();
+    // return the seeded artefact
+    return Object.assign(mesh, { seed });
   }
 }

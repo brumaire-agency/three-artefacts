@@ -1,6 +1,7 @@
-import { type Camera, Clock, Color, type Object3D, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
+import { type Camera, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
 import { type WorldConfiguration } from './world-configuration';
 import { type ArtefactFactory } from './artefact-factory';
+import { type SeededObject3d } from '~/types/seeded-object3d';
 
 /**
  * The World class.
@@ -14,7 +15,7 @@ export class World {
   /**
    * The world artefacts.
    */
-  private artefacts: Object3D[];
+  private artefacts: SeededObject3d[];
 
   /**
    * The world camera.
@@ -65,12 +66,14 @@ export class World {
     const elapsedTime = this.clock.getElapsedTime();
     // update the artefact heights
     this.artefacts.forEach((artefact) => {
-      artefact.position.y = Math.sin(elapsedTime);
+      artefact.position.y = Math.sin(elapsedTime + artefact.seed * 2);
     });
     // rerender the scene
     this.renderer.render(this.scene, this.camera);
     // reapply the animation next frame
-    window.requestAnimationFrame(() => { this.animate(); });
+    window.requestAnimationFrame(() => {
+      this.animate();
+    });
   }
 
   /**
@@ -90,9 +93,7 @@ export class World {
     for (let x = 0; x < rows; x++) {
       for (let z = 0; z < columns; z++) {
         // create an artefact for the current cell
-        const artefact = this.artefactFactory.createArtefact();
-        // position the artefact on the current cell
-        artefact.position.set(initialX + x * width, initialY, initialZ + z * depth);
+        const artefact = this.artefactFactory.createArtefact(initialX + x * width, initialY, initialZ + z * depth);
         // add the artefact to the scene and the artefacts list
         this.scene.add(artefact);
         this.artefacts.push(artefact);
