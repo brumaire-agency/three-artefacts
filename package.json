@@ -2,14 +2,33 @@
   "name": "three-artefacts",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "eslint": "eslint --ext \".js,.ts\" --ignore-path .gitignore .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "prettier": "npm run prettier:check",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --check .",
+    "lint": "npm run eslint && npm run prettier",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
+    "prepare": "husky install",
+    "preview": "vite preview",
+    "test": "echo 'WARNING: no tests specified' && exit 0"
   },
   "devDependencies": {
-    "typescript": "^4.9.3",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-config-standard-with-typescript": "^34.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5",
     "vite": "^4.1.0"
   }
 }
