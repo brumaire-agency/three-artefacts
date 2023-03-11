@@ -4,6 +4,6 @@ import { ArtefactFactory } from './artefact-factory';
 
 export function drawWorldOnCanvas(canvas: HTMLCanvasElement): World {
   const configuration = new WorldConfiguration();
-  const artefactFactory = new ArtefactFactory(configuration);
+  const artefactFactory = new ArtefactFactory();
   return new World(artefactFactory, configuration, canvas);
 }
