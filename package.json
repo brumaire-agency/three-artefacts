@@ -5,8 +5,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . && prettier --check .",
-    "lint:fix": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --fix && prettier --write --list-different .",
+    "eslint": "eslint --ext \".js,.ts\" --ignore-path .gitignore .",
+    "eslint:fix": "npm run eslint -- --fix",
+    "prettier": "npm run prettier:check",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --check .",
+    "lint": "npm run eslint && npm run prettier",
+    "lint:fix": "npm run eslint:fix && npm run prettier:fix",
     "prepare": "husky install",
     "preview": "vite preview",
     "test": "echo 'WARNING: no tests specified' && exit 0"

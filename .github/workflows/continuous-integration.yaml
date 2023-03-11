@@ -70,13 +70,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
       # Check the code style with eslint
       - name: Eslint
-        run: npm run lint:js
+        run: npm run eslint
       # Check the code formatting with eslint
       - name: Prettier
-        run: npm run lint:prettier
-      # Check the css style with stylelint
-      - name: Stylelint
-        run: npm run lint:style
+        run: npm run prettier
 
   test:
     name: Test
