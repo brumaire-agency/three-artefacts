@@ -2,12 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Three Artefacts</title>
   </head>
-  <body>
-    <h1>Three Artefacts</h1>
-    <script type="module" src="/src/main.ts"></script>
+  <body style="margin: 0">
+    <canvas id="world"></canvas>
+
+    <script type="module">
+      import { drawWorldOnCanvas } from './src';
+      drawWorldOnCanvas(document.querySelector('canvas#world'));
+    </script>
   </body>
 </html>
