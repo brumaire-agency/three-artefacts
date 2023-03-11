@@ -70,9 +70,16 @@ export class World {
   private animate(): void {
     // get the elapsed time from the clock
     const elapsedTime = this.clock.getElapsedTime();
+    // get the movement configuration
+    const { amplitude, amplitudeNoise, speed, speedNoise } = this.configuration.artefact.movement;
     // update the artefact heights
     this.artefacts.forEach((artefact) => {
-      artefact.position.y = Math.sin(elapsedTime + artefact.seed * 2);
+      // each artefact seed is applied to generate a unique speed, initial position, amplitude and activation. The noise
+      // property allow to manipulate the magnitude of the randomness: the lower the noise, the more homogenous the behavior.
+      const artefactSpeed = speed + (artefact.seed - 0.5) * speedNoise;
+      const initialPosition = artefact.seed;
+      const artefactAmplitude = amplitude + (artefact.seed - 0.5) * amplitudeNoise;
+      artefact.position.y = Math.sin(elapsedTime * artefactSpeed + initialPosition) * artefactAmplitude;
     });
     // rerender the scene
     this.renderer.render(this.scene, this.camera);

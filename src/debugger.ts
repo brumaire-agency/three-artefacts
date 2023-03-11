@@ -22,6 +22,7 @@ export class Debugger {
   constructor(private readonly configuration: WorldConfiguration, private readonly world: World) {
     this.setupArtefactDebugging();
     this.setupCameraDebugging();
+    this.setupMovementDebugging();
   }
 
   /**
@@ -41,7 +42,25 @@ export class Debugger {
     folder.add(this.configuration.artefact.materials.vertices, 'visible').name('show vertices');
     folder.addColor(this.configuration.artefact.materials.texture, 'color').name('texture color');
     // any change to the artefact requires the distribution to be redrawn
-    folder.onChange(() => { this.world.setupArtefactDistribution(); });
+    folder.onChange(() => {
+      this.world.setupArtefactDistribution();
+    });
+  }
+
+  /**
+   * Sets up the movement debugging.
+   */
+  private setupMovementDebugging(): void {
+    // create the debugging folder
+    const folder = this.gui.addFolder('Movement');
+    this.folders.artefacts = folder;
+    // add the movement parameters to the debugger
+    folder.add(this.configuration.artefact.movement, 'amplitude').step(0.1);
+    folder.add(this.configuration.artefact.movement, 'amplitudeNoise').name('amplitude noise').step(0.1);
+    folder.add(this.configuration.artefact.movement, 'speed').step(0.1);
+    folder.add(this.configuration.artefact.movement, 'speedNoise').name('speed noise').step(0.1);
+    folder.add(this.configuration.artefact.movement, 'inactivity').min(0);
+    folder.add(this.configuration.artefact.movement, 'inactivityNoise').min(0);
   }
 
   /**

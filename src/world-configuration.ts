@@ -13,8 +13,8 @@ export class WorldConfiguration {
    */
   public artefact = {
     distribution: {
-      columns: 20,
-      rows: 20,
+      columns: 1,
+      rows: 1,
     },
     shape: {
       width: 2,
@@ -26,6 +26,14 @@ export class WorldConfiguration {
       color: 0x156289,
       texture: new MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: DoubleSide, flatShading: true }),
       vertices: new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, visible: false }),
+    },
+    movement: {
+      inactivity: 2,
+      inactivityNoise: 1,
+      amplitude: 1,
+      amplitudeNoise: 0,
+      speed: 1,
+      speedNoise: 0,
     },
   };
 
