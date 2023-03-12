@@ -87,27 +87,27 @@ export class World {
     // rerender the scene
     this.renderer.render(this.scene, this.camera);
     // reapply the animation next frame
-    // setTimeout(() => this.animate(), 500)
     window.requestAnimationFrame(() => {
-      if (elapsedTime < 100000) {
-        this.animate();
-      }
+      this.animate();
     });
   }
 
-  private computeArtefactY(time: number, seed: number, speed: number, inactivity: number, amplitude: number): number {
+  private computeArtefactY(
+    time: number,
+    seed: number = 0.36,
+    speed: number = 0.2,
+    inactivity: number = 2,
+    amplitude: number = 1
+  ): number {
     // the sin period (the sin function is 2*PI periodic)
     const sinPeriod = Math.PI * 2;
     // the time expressed according to the sin period length
     const sinTime = (time * speed + seed * 2) * sinPeriod;
     // the period index (first period is 0, second is 1 and so on)
-    const activePeriodIndex = Math.floor((time * speed - 0.25 + seed * 2) % inactivity) - 1;
-    // true if the artefact should move
-    // const shouldActivate = activePeriodIndex % inactivity === 0;
-    // const initialPosition = seed * sinPeriod;
+    const activePeriodIndex = Math.floor((time * speed - 0.25 + seed * 2) % (inactivity + 1)) - 1;
 
-    // console.log((time * speed).toFixed(1), sinTime.toFixed(1), activePeriodIndex);
-    return activePeriodIndex % inactivity === 0 ? Math.sin(sinTime) * amplitude : 1;
+    // return an updated position if the artefact should move
+    return activePeriodIndex % (inactivity + 1) === 0 ? Math.sin(sinTime) * amplitude : amplitude;
   }
 
   /*

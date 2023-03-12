@@ -1,6 +1,7 @@
 import GUI from 'lil-gui';
 import { type WorldConfiguration } from '~/world-configuration';
 import { type World } from '~/world';
+import { GridHelper } from 'three';
 
 /**
  * The Debugger class.
@@ -23,6 +24,7 @@ export class Debugger {
     this.setupArtefactDebugging();
     this.setupCameraDebugging();
     this.setupMovementDebugging();
+    this.setupWorldDebugging();
   }
 
   /**
@@ -81,5 +83,20 @@ export class Debugger {
       this.world.camera.position.set(x, y, z);
       this.world.camera.lookAt(0, 0, 0);
     });
+  }
+
+  /**
+   * Sets up the world debugging.
+   * @private
+   */
+  private setupWorldDebugging(): void {
+    // create the debugging folder
+    const folder = this.gui.addFolder('World');
+    this.folders.world = folder;
+    // adds a grid
+    const grid = new GridHelper(1000, 1000, 0xbbbbbb, 0xbbbbbb);
+    grid.visible = false;
+    this.world.scene.add(grid);
+    folder.add(grid, 'visible').name('show grid');
   }
 }
