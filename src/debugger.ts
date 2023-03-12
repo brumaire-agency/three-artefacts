@@ -95,7 +95,7 @@ export class Debugger {
     this.folders.world = folder;
     // adds a grid
     const grid = new GridHelper(1000, 1000, 0xbbbbbb, 0xbbbbbb);
-    grid.visible = false;
+    grid.visible = this.configuration.world.grid;
     this.world.scene.add(grid);
     folder.add(grid, 'visible').name('show grid');
   }

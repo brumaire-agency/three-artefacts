@@ -14,7 +14,7 @@ export class WorldConfiguration {
   public artefact = {
     distribution: {
       columns: 20,
-      rows: 10,
+      rows: 40,
     },
     shape: {
       width: 2,
@@ -32,7 +32,7 @@ export class WorldConfiguration {
       inactivityNoise: 0,
       amplitude: 0.2,
       amplitudeNoise: 0,
-      speed: 0.2,
+      speed: 0.5,
       speedNoise: 0,
     },
   };
@@ -44,7 +44,7 @@ export class WorldConfiguration {
    */
   public camera = {
     x: -3,
-    y: 8,
+    y: 6,
     z: 7,
   };
 
@@ -76,5 +76,6 @@ export class WorldConfiguration {
    */
   public world = {
     background: 0x444444,
+    grid: true,
   };
 }

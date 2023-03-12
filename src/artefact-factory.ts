@@ -57,7 +57,7 @@ export class ArtefactFactory {
   }
 
   /**
-   * Creates an artefact.
+   * Creates an artefact5
    */
   public createArtefact(x: number, y: number, z: number): SeededObject3d {
     const geometry = this.createArtefactBaseGeometry();

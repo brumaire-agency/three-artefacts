@@ -81,7 +81,8 @@ export class World {
         artefact.seed,
         speed + (0.5 - artefact.seed) * speedNoise,
         Math.round(inactivity + (0.5 - artefact.seed) * inactivityNoise),
-        amplitude + (0.5 - artefact.seed) * amplitudeNoise
+        amplitude + (0.5 - artefact.seed) * amplitudeNoise,
+        artefact.seed > 0.5
       );
     });
     // rerender the scene
@@ -97,17 +98,18 @@ export class World {
     seed: number = 0.36,
     speed: number = 0.2,
     inactivity: number = 2,
-    amplitude: number = 1
+    amplitude: number = 1,
+    inverted: boolean = false
   ): number {
     // the sin period (the sin function is 2*PI periodic)
     const sinPeriod = Math.PI * 2;
     // the time expressed according to the sin period length
-    const sinTime = (time * speed + seed * 2) * sinPeriod;
+    const sinTime = (time * speed + seed * 2 + (inverted ? 0.5 : 0)) * sinPeriod;
     // the period index (first period is 0, second is 1 and so on)
     const activePeriodIndex = Math.floor((time * speed - 0.25 + seed * 2) % (inactivity + 1)) - 1;
 
     // return an updated position if the artefact should move
-    return activePeriodIndex % (inactivity + 1) === 0 ? Math.sin(sinTime) * amplitude : amplitude;
+    return activePeriodIndex % (inactivity + 1) === 0 ? Math.sin(sinTime) * amplitude : amplitude * (inverted ? -1 : 1);
   }
 
   /*
