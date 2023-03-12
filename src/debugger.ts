@@ -24,6 +24,7 @@ export class Debugger {
     this.setupArtefactDebugging();
     this.setupArtefactDistributionDebugging();
     this.setupArtefactMovementDebugging();
+    this.setupLightDebugging();
     this.setupCameraDebugging();
     this.setupWorldDebugging();
   }
@@ -33,15 +34,17 @@ export class Debugger {
    */
   private setupArtefactDebugging(): void {
     // create the debugging folder
-    const folder = this.gui.addFolder('Artefacts');
+    const folder = this.gui.addFolder('Artefact');
     this.folders.artefacts = folder;
     // add the artefacts parameters to the debugger
     folder.add(this.configuration.artefact.shape, 'width').name('artefact width').min(1);
     folder.add(this.configuration.artefact.shape, 'height').name('artefact height').min(1);
     folder.add(this.configuration.artefact.shape, 'depth').name('artefact depth').min(1);
-    folder.add(this.configuration.artefact.shape, 'radialSegments').name('cylinder vertices').min(0);
-    folder.add(this.configuration.artefact.materials.vertices, 'visible').name('show vertices');
-    folder.addColor(this.configuration.artefact.materials.texture, 'color').name('texture color');
+    folder.add(this.configuration.artefact.shape, 'polygons').name('polygons').min(18);
+    folder.addColor(this.configuration.artefact.materials, 'color').name('texture color');
+    folder.add(this.configuration.artefact.materials, 'aoMapIntensity').min(0).max(10).step(0.1);
+    folder.add(this.configuration.artefact.materials, 'displacementScale').min(0).max(1).step(0.01);
+    folder.add(this.configuration.artefact.materials, 'roughness').min(0).max(3).step(0.1);
     // any change to the artefact requires the distribution to be redrawn
     folder.onChange(() => {
       this.world.setupArtefactDistribution();
@@ -104,6 +107,18 @@ export class Debugger {
       this.world.camera.position.set(x, y, z);
       this.world.camera.lookAt(0, 0, 0);
     });
+  }
+
+  private setupLightDebugging(): void {
+    // create the debugging folder
+    const folder = this.gui.addFolder('Lights');
+    this.folders.lights = folder;
+    // add the lights parameters to the debugger
+    folder.add(this.world.light.position, 'x').min(-20).max(20);
+    folder.add(this.world.light.position, 'y').min(-20).max(20);
+    folder.add(this.world.light.position, 'z').min(-20).max(20);
+    folder.add(this.world.light, 'intensity').min(-20).max(20);
+    folder.add(this.world.light, 'distance').min(-20).max(20);
   }
 
   /**

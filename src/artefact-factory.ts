@@ -1,4 +1,12 @@
-import { BoxGeometry, type BufferGeometry, CylinderGeometry, Group, LineSegments, Mesh } from 'three';
+import {
+  BoxGeometry,
+  BufferAttribute,
+  type BufferGeometry,
+  CylinderGeometry,
+  Mesh,
+  MeshStandardMaterial,
+  TextureLoader,
+} from 'three';
 // @ts-expect-error there is no type definition for the BufferGeometryUtils file
 import { mergeBufferGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import seedrandom from 'seedrandom';
@@ -12,6 +20,11 @@ import { type WorldConfiguration } from '~/world-configuration';
  */
 export class ArtefactFactory {
   /**
+   * The texture loader.
+   */
+  private readonly textureLoader = new TextureLoader();
+
+  /**
    * The class constructor.
    */
   public constructor(private readonly configuration: WorldConfiguration) {}
@@ -23,18 +36,18 @@ export class ArtefactFactory {
    * geometry change.
    */
   public createArtefactBaseGeometry(): BufferGeometry {
-    const { width, height, depth, radialSegments } = this.configuration.artefact.shape;
+    const { width, height, depth, polygons } = this.configuration.artefact.shape;
     // derive some geometry dimensions
     const cylinderRadius = depth / 2;
     const boxWidth = width - cylinderRadius * 2;
     const cylinderTranslation = boxWidth / 2;
     // the artifact is compounded of a central box and two half-cylinders on left and right sides
-    const box = new BoxGeometry(boxWidth, height, depth);
+    const box = new BoxGeometry(boxWidth, height, depth, polygons / 18, polygons / 6, 100);
     const leftCylinder = new CylinderGeometry(
       cylinderRadius,
       cylinderRadius,
       height,
-      radialSegments,
+      polygons / 9,
       height,
       false,
       Math.PI,
@@ -44,7 +57,7 @@ export class ArtefactFactory {
       cylinderRadius,
       cylinderRadius,
       height,
-      radialSegments,
+      polygons / 9,
       height,
       false,
       0,
@@ -53,7 +66,27 @@ export class ArtefactFactory {
     leftCylinder.translate(-cylinderTranslation, 0, 0);
     rightCylinder.translate(cylinderTranslation, 0, 0);
 
-    return mergeBufferGeometries([leftCylinder, box, rightCylinder]);
+    const geometry = mergeBufferGeometries([leftCylinder, box, rightCylinder]);
+    // set the uv2 for the ambient occlusion
+    geometry.setAttribute('uv2', new BufferAttribute(geometry.attributes.uv.array, 2));
+    return geometry;
+  }
+
+  /**
+   * Creates a material for the artefact.
+   */
+  public createArtefactMaterial(): MeshStandardMaterial {
+    return new MeshStandardMaterial({
+      color: this.configuration.artefact.materials.color,
+      aoMap: this.textureLoader.load('/assets/ambient.jpeg'),
+      aoMapIntensity: this.configuration.artefact.materials.aoMapIntensity,
+      displacementMap: this.textureLoader.load('/assets/height.jpeg'),
+      displacementScale: this.configuration.artefact.materials.displacementScale,
+      map: this.textureLoader.load('/assets/albedo.jpeg'),
+      normalMap: this.textureLoader.load('/assets/normal.jpeg'),
+      roughnessMap: this.textureLoader.load('/assets/roughness.jpeg'),
+      roughness: this.configuration.artefact.materials.roughness,
+    });
   }
 
   /**
@@ -61,15 +94,15 @@ export class ArtefactFactory {
    */
   public createArtefact(x: number, y: number, z: number): SeededObject3d {
     const geometry = this.createArtefactBaseGeometry();
-    // the mesh is a group of the actual mesh, as well as some line segments to show the artifact vertices in dev
-    const mesh = new Group();
-    mesh.add(new Mesh(geometry, this.configuration.artefact.materials.texture));
-    mesh.add(new LineSegments(geometry, this.configuration.artefact.materials.vertices));
+    // create the mesh
+    const material = this.createArtefactMaterial();
+    const mesh = new Mesh(geometry, material);
     // set the mesh position
     mesh.position.set(x, y, z);
     // compute the artefact seed - the seed is always the same for a given {x,y,z} set
     const seed = seedrandom(`${x}-${y}-${z}`)();
     // return the seeded artefact
+
     return Object.assign(mesh, { seed });
   }
 }
