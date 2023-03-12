@@ -10,5 +10,7 @@ module.exports = {
     project: ['./tsconfig.json'],
   },
   plugins: ['prettier'],
-  rules: {},
+  rules: {
+    '@typescript-eslint/strict-boolean-expressions': 0,
+  },
 };

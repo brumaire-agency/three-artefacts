@@ -17,6 +17,8 @@
     "test": "echo 'WARNING: no tests specified' && exit 0"
   },
   "devDependencies": {
+    "@types/seedrandom": "^3.0.5",
+    "@types/three": "^0.149.0",
     "@typescript-eslint/eslint-plugin": "^5.54.1",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.7.0",
@@ -30,5 +32,10 @@
     "prettier": "^2.8.4",
     "typescript": "^4.9.5",
     "vite": "^4.1.0"
+  },
+  "dependencies": {
+    "lil-gui": "^0.18.0",
+    "seedrandom": "^3.0.5",
+    "three": "^0.150.1"
   }
 }
