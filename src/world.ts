@@ -41,7 +41,7 @@ export class World {
   /**
    * The world scene.
    */
-  private scene: Scene;
+  public scene: Scene;
 
   /**
    * The world constructor.
@@ -71,23 +71,60 @@ export class World {
     // get the elapsed time from the clock
     const elapsedTime = this.clock.getElapsedTime();
     // get the movement configuration
-    const { amplitude, amplitudeNoise, speed, speedNoise } = this.configuration.artefact.movement;
+    const { amplitude, amplitudeNoise, inactivity, inactivityNoise, speed, speedNoise } =
+      this.configuration.artefact.movement;
     // update the artefact heights
     this.artefacts.forEach((artefact) => {
-      // each artefact seed is applied to generate a unique speed, initial position, amplitude and activation. The noise
-      // property allow to manipulate the magnitude of the randomness: the lower the noise, the more homogenous the behavior.
-      const artefactSpeed = speed + (artefact.seed - 0.5) * speedNoise;
-      const initialPosition = artefact.seed;
-      const artefactAmplitude = amplitude + (artefact.seed - 0.5) * amplitudeNoise;
-      artefact.position.y = Math.sin(elapsedTime * artefactSpeed + initialPosition) * artefactAmplitude;
+      // set the artefact y position
+      artefact.position.y = this.computeArtefactY(
+        elapsedTime,
+        artefact.seed,
+        speed + (0.5 - artefact.seed) * speedNoise,
+        Math.round(inactivity + (0.5 - artefact.seed) * inactivityNoise),
+        amplitude + (0.5 - artefact.seed) * amplitudeNoise
+      );
     });
     // rerender the scene
     this.renderer.render(this.scene, this.camera);
     // reapply the animation next frame
+    // setTimeout(() => this.animate(), 500)
     window.requestAnimationFrame(() => {
-      this.animate();
+      if (elapsedTime < 100000) {
+        this.animate();
+      }
     });
   }
+
+  private computeArtefactY(time: number, seed: number, speed: number, inactivity: number, amplitude: number): number {
+    // the sin period (the sin function is 2*PI periodic)
+    const sinPeriod = Math.PI * 2;
+    // the time expressed according to the sin period length
+    const sinTime = (time * speed + seed * 2) * sinPeriod;
+    // the period index (first period is 0, second is 1 and so on)
+    const activePeriodIndex = Math.floor((time * speed - 0.25 + seed * 2) % inactivity) - 1;
+    // true if the artefact should move
+    // const shouldActivate = activePeriodIndex % inactivity === 0;
+    // const initialPosition = seed * sinPeriod;
+
+    // console.log((time * speed).toFixed(1), sinTime.toFixed(1), activePeriodIndex);
+    return activePeriodIndex % inactivity === 0 ? Math.sin(sinTime) * amplitude : 1;
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | Setup functions
+  |--------------------------------------------------------------------------
+  |
+  | The following functions are "setup functions". These functions mutate the
+  | world - the main side effect is adding elements to the scene.
+  |
+  | The goal of setup functions is to encapsulate some setup logic, such as
+  | adding elements to the scene by functionality (e.g. a light configuration).
+  |
+  | As they define global elements at the world initialization, they should be
+  | invoked in the world constructor.
+  |
+  */
 
   /**
    * Sets up the artefact distribution.
