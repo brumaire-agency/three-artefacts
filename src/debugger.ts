@@ -27,6 +27,9 @@ export class Debugger {
     this.setupLightDebugging();
     this.setupCameraDebugging();
     this.setupWorldDebugging();
+
+    Object.values(this.folders).map((folder) => folder.close());
+    this.gui.close();
   }
 
   /**

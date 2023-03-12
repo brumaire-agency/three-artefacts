@@ -189,6 +189,7 @@ export class World {
     this.scene.add(this.camera);
     // add orbit controls for the camera
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enabled = false;
     // update the configuration on change
     this.controls.addEventListener('change', () => Object.assign(this.configuration.camera, this.camera.position));
   }
