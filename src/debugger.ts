@@ -22,8 +22,9 @@ export class Debugger {
    */
   constructor(private readonly configuration: WorldConfiguration, private readonly world: World) {
     this.setupArtefactDebugging();
+    this.setupArtefactDistributionDebugging();
+    this.setupArtefactMovementDebugging();
     this.setupCameraDebugging();
-    this.setupMovementDebugging();
     this.setupWorldDebugging();
   }
 
@@ -35,8 +36,6 @@ export class Debugger {
     const folder = this.gui.addFolder('Artefacts');
     this.folders.artefacts = folder;
     // add the artefacts parameters to the debugger
-    folder.add(this.configuration.artefact.distribution, 'rows').min(1);
-    folder.add(this.configuration.artefact.distribution, 'columns').min(1);
     folder.add(this.configuration.artefact.shape, 'width').name('artefact width').min(1);
     folder.add(this.configuration.artefact.shape, 'height').name('artefact height').min(1);
     folder.add(this.configuration.artefact.shape, 'depth').name('artefact depth').min(1);
@@ -50,17 +49,39 @@ export class Debugger {
   }
 
   /**
+   * Sets up the artefact distribution debugging.
+   */
+  private setupArtefactDistributionDebugging(): void {
+    // create the debugging folder
+    const folder = this.gui.addFolder('Artefact Distribution');
+    this.folders.artefactDistribution = folder;
+    // add the artefact distribution parameters to the debugger
+    folder.add(this.configuration.artefact.distribution, 'rows').min(1);
+    folder.add(this.configuration.artefact.distribution, 'columns').min(1);
+    folder.add(this.configuration.artefact.distribution, 'xGap').step(0.01);
+    folder.add(this.configuration.artefact.distribution, 'zGap').step(0.01);
+    folder.add(this.configuration.artefact.distribution, 'xSlippage').min(-1).max(1).step(0.01);
+    folder.add(this.configuration.artefact.distribution, 'zSlippage').min(-1).max(1).step(0.01);
+    folder.add(this.configuration.artefact.distribution, 'xSlope').min(-1).max(1).step(0.01);
+    folder.add(this.configuration.artefact.distribution, 'zSlope').min(-1).max(1).step(0.01);
+    // any change to the artefact requires the distribution to be redrawn
+    folder.onChange(() => {
+      this.world.setupArtefactDistribution();
+    });
+  }
+
+  /**
    * Sets up the movement debugging.
    */
-  private setupMovementDebugging(): void {
+  private setupArtefactMovementDebugging(): void {
     // create the debugging folder
-    const folder = this.gui.addFolder('Movement');
-    this.folders.artefacts = folder;
+    const folder = this.gui.addFolder('Artefact Movement');
+    this.folders.artefactMovement = folder;
     // add the movement parameters to the debugger
     folder.add(this.configuration.artefact.movement, 'amplitude').step(0.1);
     folder.add(this.configuration.artefact.movement, 'amplitudeNoise').name('amplitude noise').step(0.1);
-    folder.add(this.configuration.artefact.movement, 'speed').step(0.1);
-    folder.add(this.configuration.artefact.movement, 'speedNoise').name('speed noise').step(0.1);
+    folder.add(this.configuration.artefact.movement, 'speed').step(0.01);
+    folder.add(this.configuration.artefact.movement, 'speedNoise').name('speed noise').step(0.01);
     folder.add(this.configuration.artefact.movement, 'inactivity').min(0);
     folder.add(this.configuration.artefact.movement, 'inactivityNoise').min(0);
   }

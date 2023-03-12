@@ -31,7 +31,7 @@ export class World {
   /**
    * The world clock.
    */
-  private clock: Clock;
+  public clock: Clock;
 
   /**
    * The world renderer.
@@ -73,17 +73,20 @@ export class World {
     // get the movement configuration
     const { amplitude, amplitudeNoise, inactivity, inactivityNoise, speed, speedNoise } =
       this.configuration.artefact.movement;
+    const { xSlope, zSlope } = this.configuration.artefact.distribution;
     // update the artefact heights
     this.artefacts.forEach((artefact) => {
       // set the artefact y position
-      artefact.position.y = this.computeArtefactY(
-        elapsedTime,
-        artefact.seed,
-        speed + (0.5 - artefact.seed) * speedNoise,
-        Math.round(inactivity + (0.5 - artefact.seed) * inactivityNoise),
-        amplitude + (0.5 - artefact.seed) * amplitudeNoise,
-        artefact.seed > 0.5
-      );
+      artefact.position.y =
+        this.computeArtefactY(
+          elapsedTime,
+          artefact.seed,
+          speed + (0.5 - artefact.seed) * speedNoise,
+          Math.round(inactivity + (0.5 - artefact.seed) * inactivityNoise),
+          amplitude + (0.5 - artefact.seed) * amplitudeNoise
+        ) -
+        artefact.position.z * zSlope -
+        artefact.position.x * xSlope;
     });
     // rerender the scene
     this.renderer.render(this.scene, this.camera);
@@ -98,18 +101,22 @@ export class World {
     seed: number = 0.36,
     speed: number = 0.2,
     inactivity: number = 2,
-    amplitude: number = 1,
-    inverted: boolean = false
+    amplitude: number = 1
   ): number {
     // the sin period (the sin function is 2*PI periodic)
     const sinPeriod = Math.PI * 2;
     // the time expressed according to the sin period length
-    const sinTime = (time * speed + seed * 2 + (inverted ? 0.5 : 0)) * sinPeriod;
-    // the period index (first period is 0, second is 1 and so on)
-    const activePeriodIndex = Math.floor((time * speed - 0.25 + seed * 2) % (inactivity + 1)) - 1;
-
+    const sinTime = (time * speed + seed * 2) * sinPeriod;
+    // compute the number of the current half period
+    const halfPeriodIndex = Math.floor((time * speed - 0.25 + seed * 2) * 2);
+    // compute the last active half period
+    const lastActiveHalfPeriodIndex = halfPeriodIndex - (halfPeriodIndex % (inactivity * 2 + 1));
+    // the artefact should move if it is in an active period
+    const shouldMove = halfPeriodIndex > 0 && halfPeriodIndex === lastActiveHalfPeriodIndex;
+    // get the idle position, which depends on the previous movement
+    const idlePosition = lastActiveHalfPeriodIndex % 2 ? amplitude : -amplitude;
     // return an updated position if the artefact should move
-    return activePeriodIndex % (inactivity + 1) === 0 ? Math.sin(sinTime) * amplitude : amplitude * (inverted ? -1 : 1);
+    return shouldMove ? Math.sin(sinTime) * amplitude : idlePosition;
   }
 
   /*
@@ -141,7 +148,7 @@ export class World {
     this.artefacts = [];
     // extract required parameters from the configuration
     const { width, depth } = this.configuration.artefact.shape;
-    const { columns, rows } = this.configuration.artefact.distribution;
+    const { columns, rows, xGap, zGap, xSlippage, zSlippage } = this.configuration.artefact.distribution;
     // the grid initial coordinates
     const initialX = (-width * rows) / 2 + width / 2; // removing half of the artefact width allows to inline the artifact with the grid
     const initialY = 0; // Y is updated in the animate() function to move the artefacts up and down
@@ -150,7 +157,11 @@ export class World {
     for (let x = 0; x < rows; x++) {
       for (let z = 0; z < columns; z++) {
         // create an artefact for the current cell
-        const artefact = this.artefactFactory.createArtefact(initialX + x * width, initialY, initialZ + z * depth);
+        const artefact = this.artefactFactory.createArtefact(
+          initialX + x * (width + xGap) + xSlippage * z,
+          initialY,
+          initialZ + z * (depth + zGap) + zSlippage * x
+        );
         // add the artefact to the scene and the artefacts list
         this.scene.add(artefact);
         this.artefacts.push(artefact);

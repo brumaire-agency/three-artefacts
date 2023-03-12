@@ -14,7 +14,13 @@ export class WorldConfiguration {
   public artefact = {
     distribution: {
       columns: 20,
-      rows: 40,
+      rows: 10,
+      xGap: 0,
+      zGap: 0,
+      xSlippage: 0.3,
+      zSlippage: 0.26,
+      xSlope: -0.05,
+      zSlope: 0.12,
     },
     shape: {
       width: 2,
@@ -28,12 +34,12 @@ export class WorldConfiguration {
       vertices: new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, visible: false }),
     },
     movement: {
-      inactivity: 1,
-      inactivityNoise: 0,
-      amplitude: 0.2,
-      amplitudeNoise: 0,
-      speed: 0.5,
-      speedNoise: 0,
+      inactivity: 2,
+      inactivityNoise: 2,
+      amplitude: 0,
+      amplitudeNoise: 1,
+      speed: 0.2,
+      speedNoise: 0.5,
     },
   };
 
