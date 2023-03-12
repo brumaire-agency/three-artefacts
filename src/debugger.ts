@@ -44,6 +44,7 @@ export class Debugger {
     folder.addColor(this.configuration.artefact.materials, 'color').name('texture color');
     folder.add(this.configuration.artefact.materials, 'aoMapIntensity').min(0).max(10).step(0.1);
     folder.add(this.configuration.artefact.materials, 'roughness').min(0).max(3).step(0.1);
+    folder.add(this.configuration.artefact.materials, 'normal').name('normal map');
     // any change to the artefact requires the distribution to be redrawn
     folder.onChange(() => {
       this.world.setupArtefactDistribution();

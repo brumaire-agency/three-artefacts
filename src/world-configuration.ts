@@ -24,11 +24,12 @@ export class WorldConfiguration {
       width: 2,
       height: 2,
       depth: 1,
-      polygons: 100,
+      polygons: 102,
     },
     materials: {
       color: 0x1e222b,
       aoMapIntensity: 1,
+      normal: true,
       displacementScale: 0,
       roughness: 1.4,
     },

@@ -45,12 +45,12 @@ export class ArtefactFactory {
     const boxWidth = width - cylinderRadius * 2;
     const cylinderTranslation = boxWidth / 2;
     // the artifact is compounded of a central box and two half-cylinders on left and right sides
-    const box = new BoxGeometry(boxWidth, height, depth, polygons / 18, polygons / 6, 100);
+    const box = new BoxGeometry(boxWidth, height, depth);
     const leftCylinder = new CylinderGeometry(
       cylinderRadius,
       cylinderRadius,
       height,
-      polygons / 9,
+      polygons / 6 - 1,
       height,
       false,
       Math.PI,
@@ -60,7 +60,7 @@ export class ArtefactFactory {
       cylinderRadius,
       cylinderRadius,
       height,
-      polygons / 9,
+      polygons / 6 - 1,
       height,
       false,
       0,
@@ -83,7 +83,7 @@ export class ArtefactFactory {
       color: this.configuration.artefact.materials.color,
       aoMap: this.textureLoader.load(ambient),
       aoMapIntensity: this.configuration.artefact.materials.aoMapIntensity,
-      normalMap: this.textureLoader.load(normal),
+      normalMap: this.configuration.artefact.materials.normal && this.textureLoader.load(normal),
       roughnessMap: this.textureLoader.load(roughness),
       roughness: this.configuration.artefact.materials.roughness,
     });
