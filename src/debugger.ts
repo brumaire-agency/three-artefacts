@@ -43,7 +43,6 @@ export class Debugger {
     folder.add(this.configuration.artefact.shape, 'polygons').name('polygons').min(18);
     folder.addColor(this.configuration.artefact.materials, 'color').name('texture color');
     folder.add(this.configuration.artefact.materials, 'aoMapIntensity').min(0).max(10).step(0.1);
-    folder.add(this.configuration.artefact.materials, 'displacementScale').min(0).max(1).step(0.01);
     folder.add(this.configuration.artefact.materials, 'roughness').min(0).max(3).step(0.1);
     // any change to the artefact requires the distribution to be redrawn
     folder.onChange(() => {

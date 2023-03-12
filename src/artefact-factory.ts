@@ -12,6 +12,9 @@ import { mergeBufferGeometries } from 'three/addons/utils/BufferGeometryUtils.js
 import seedrandom from 'seedrandom';
 import { type SeededObject3d } from '~/types/seeded-object3d';
 import { type WorldConfiguration } from '~/world-configuration';
+import ambient from './assets/ambient.jpeg';
+import normal from './assets/normal.jpeg';
+import roughness from './assets/roughness.jpeg';
 
 /**
  * The ArtefactFactory class.
@@ -78,13 +81,10 @@ export class ArtefactFactory {
   public createArtefactMaterial(): MeshStandardMaterial {
     return new MeshStandardMaterial({
       color: this.configuration.artefact.materials.color,
-      aoMap: this.textureLoader.load('/assets/ambient.jpeg'),
+      aoMap: this.textureLoader.load(ambient),
       aoMapIntensity: this.configuration.artefact.materials.aoMapIntensity,
-      displacementMap: this.textureLoader.load('/assets/height.jpeg'),
-      displacementScale: this.configuration.artefact.materials.displacementScale,
-      map: this.textureLoader.load('/assets/albedo.jpeg'),
-      normalMap: this.textureLoader.load('/assets/normal.jpeg'),
-      roughnessMap: this.textureLoader.load('/assets/roughness.jpeg'),
+      normalMap: this.textureLoader.load(normal),
+      roughnessMap: this.textureLoader.load(roughness),
       roughness: this.configuration.artefact.materials.roughness,
     });
   }
