@@ -1,5 +1,3 @@
-import { DoubleSide, LineBasicMaterial, MeshPhongMaterial } from 'three';
-
 /**
  * The WorldConfiguration class.
  *
@@ -26,12 +24,14 @@ export class WorldConfiguration {
       width: 2,
       height: 2,
       depth: 1,
-      radialSegments: 16,
+      polygons: 102,
     },
     materials: {
-      color: 0x156289,
-      texture: new MeshPhongMaterial({ color: 0x156289, emissive: 0x072534, side: DoubleSide, flatShading: true }),
-      vertices: new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, visible: false }),
+      color: 0x1e222b,
+      aoMapIntensity: 1,
+      normal: true,
+      displacementScale: 0,
+      roughness: 1.4,
     },
     movement: {
       inactivity: 2,
@@ -54,15 +54,14 @@ export class WorldConfiguration {
     z: 7,
   };
 
-  /**
-   * The movement configuration.
-   *
-   * These settings control how the artefacts are displaced in the world.
-   */
-  public movement = {
-    amplitude: 0.3,
-    noise: 0,
-    speed: 1,
+  public light = {
+    coordinates: {
+      x: 2.3,
+      y: 4.7,
+      z: 2,
+    },
+    distance: 10,
+    intensity: 3,
   };
 
   /**
@@ -82,6 +81,6 @@ export class WorldConfiguration {
    */
   public world = {
     background: 0x444444,
-    grid: true,
+    grid: false,
   };
 }

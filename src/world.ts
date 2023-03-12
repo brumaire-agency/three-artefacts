@@ -1,4 +1,4 @@
-import { type Camera, Clock, Color, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
+import { type Camera, Clock, Color, HemisphereLight, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from 'three';
 import { type WorldConfiguration } from './world-configuration';
 import { type ArtefactFactory } from './artefact-factory';
 import { type SeededObject3d } from '~/types/seeded-object3d';
@@ -32,6 +32,13 @@ export class World {
    * The world clock.
    */
   public clock: Clock;
+
+  /**
+   * The scene light.
+   *
+   * todo: create a class for the lights once more than a PointLight is required to handle the world lighting.
+   */
+  public light: PointLight;
 
   /**
    * The world renderer.
@@ -182,6 +189,7 @@ export class World {
     this.scene.add(this.camera);
     // add orbit controls for the camera
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enabled = false;
     // update the configuration on change
     this.controls.addEventListener('change', () => Object.assign(this.configuration.camera, this.camera.position));
   }
@@ -197,10 +205,12 @@ export class World {
    * Sets up the lights
    */
   private setupLights(): void {
-    const light = new PointLight(0xffffff, 1, 0);
-    light.position.set(10, 10, 0);
-    light.lookAt(0, 0, 0);
-    this.scene.add(light);
+    const { coordinates, distance, intensity } = this.configuration.light;
+    // add a point light
+    this.scene.add(new HemisphereLight(0xffffbb, 0x080820, 1));
+    this.light = new PointLight(0xffffff, intensity, distance);
+    this.light.position.set(coordinates.x, coordinates.y, coordinates.z);
+    this.scene.add(this.light);
   }
 
   /**
