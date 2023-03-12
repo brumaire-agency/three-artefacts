@@ -83,7 +83,7 @@ export class ArtefactFactory {
       color: this.configuration.artefact.materials.color,
       aoMap: this.textureLoader.load(ambient),
       aoMapIntensity: this.configuration.artefact.materials.aoMapIntensity,
-      normalMap: this.configuration.artefact.materials.normal && this.textureLoader.load(normal),
+      normalMap: this.configuration.artefact.materials.normal ? this.textureLoader.load(normal) : null,
       roughnessMap: this.textureLoader.load(roughness),
       roughness: this.configuration.artefact.materials.roughness,
     });
