@@ -84,13 +84,6 @@ export class World {
     // get the elapsed time from the clock
     const elapsedTime = this.clock.getElapsedTime();
 
-    // update the camera
-    if (this.customControls.enabled) {
-      this.camera.position.x = this.configuration.camera.x + this.customControls.x;
-      this.camera.position.y = this.configuration.camera.y + this.customControls.y;
-      this.camera.lookAt(0, 0, 0);
-    }
-
     // get the movement configuration
     const { amplitude, amplitudeNoise, inactivity, inactivityNoise, speed, speedNoise } =
       this.configuration.artefact.movement;
@@ -202,7 +195,7 @@ export class World {
     this.camera.lookAt(0, 0, 0);
     this.scene.add(this.camera);
     // add the custom controls
-    this.customControls = new CustomControls(this.camera, this.renderer.domElement);
+    this.customControls = new CustomControls(this.camera, this.configuration, this.renderer.domElement);
     // add orbit controls for the camera
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enabled = false;
