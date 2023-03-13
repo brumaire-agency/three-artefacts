@@ -3,6 +3,7 @@ import { type WorldConfiguration } from './world-configuration';
 import { type ArtefactFactory } from './artefact-factory';
 import { type SeededObject3d } from '~/types/seeded-object3d';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { CustomControls } from './controls';
 
 /**
  * The World class.
@@ -27,6 +28,11 @@ export class World {
    * The world camera controls.
    */
   public controls: OrbitControls;
+
+  /**
+   * The world camera custom controls.
+   */
+  public customControls: CustomControls;
 
   /**
    * The world clock.
@@ -77,6 +83,14 @@ export class World {
   private animate(): void {
     // get the elapsed time from the clock
     const elapsedTime = this.clock.getElapsedTime();
+
+    // update the camera
+    if (this.customControls.enabled) {
+      this.camera.position.x = this.configuration.camera.x + this.customControls.x;
+      this.camera.position.y = this.configuration.camera.y + this.customControls.y;
+      this.camera.lookAt(0, 0, 0);
+    }
+
     // get the movement configuration
     const { amplitude, amplitudeNoise, inactivity, inactivityNoise, speed, speedNoise } =
       this.configuration.artefact.movement;
@@ -187,6 +201,8 @@ export class World {
     this.camera.position.set(x, y, z);
     this.camera.lookAt(0, 0, 0);
     this.scene.add(this.camera);
+    // add the custom controls
+    this.customControls = new CustomControls(this.camera, this.renderer.domElement);
     // add orbit controls for the camera
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enabled = false;
